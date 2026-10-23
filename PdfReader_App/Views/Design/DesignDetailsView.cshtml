@@ -1,0 +1,74 @@
+﻿@model PdfReader_App.Models.ViewModels.ParsedDesignVM
+
+@{
+    ViewBag.Title = "Design Details";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4><i class="fa fa-info-circle"></i> Design Details - @Model.DesignCode</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Design Code</th>
+                            <td><strong>@Model.DesignCode</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Design Name</th>
+                            <td>@Model.DesignName</td>
+                        </tr>
+                        <tr>
+                            <th>Stitches</th>
+                            <td>@(Model.Stitches?.ToString("N0") ?? "-")</td>
+                        </tr>
+                        <tr>
+                            <th>Width (mm)</th>
+                            <td>@(Model.Width?.ToString("F2") ?? "-")</td>
+                        </tr>
+                        <tr>
+                            <th>Height (mm)</th>
+                            <td>@(Model.Height?.ToString("F2") ?? "-")</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="40%">Colors</th>
+                            <td>@(Model.Colors ?? 0)</td>
+                        </tr>
+                        <tr>
+                            <th>Colorway</th>
+                            <td>@Model.Colorway</td>
+                        </tr>
+                        <tr>
+                            <th>Zoom</th>
+                            <td>@Model.Zoom</td>
+                        </tr>
+                        <tr>
+                            <th>Design Last Saved</th>
+                            <td>@(Model.DesignLastSaved?.ToString("dd MMM yyyy hh:mm tt") ?? "-")</td>
+                        </tr>
+                        <tr>
+                            <th>Date Printed</th>
+                            <td>@(Model.DatePrinted?.ToString("dd MMM yyyy hh:mm tt") ?? "-")</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-3">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Back to List
+                </a>
+                <a href="@Url.Action("Preview", new { designId = Model.DesignId })" class="btn btn-primary">
+                    <i class="fa fa-eye"></i> Full Preview
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

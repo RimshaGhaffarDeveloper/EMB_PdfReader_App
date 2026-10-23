@@ -1,0 +1,350 @@
+﻿@model PdfReader_App.Models.ViewModels.DesignImageVM
+
+@{
+    ViewBag.Title = "Design Image - " + Model.DesignCode;
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .image-container {
+        max-width: 1400px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .image-header {
+        background: white;
+        border-radius: 15px;
+        padding: 25px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .header-info h2 {
+        margin: 0;
+        color: #2d3748;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .header-info p {
+        margin: 5px 0 0 0;
+        color: #718096;
+        font-size: 16px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-action {
+        padding: 12px 25px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .image-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    .image-wrapper {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+    }
+
+    .design-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        cursor: zoom-in;
+        transition: all 0.3s ease;
+    }
+
+    .design-image:hover {
+        box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        transform: scale(1.02);
+    }
+
+    .image-info {
+        margin-top: 25px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        text-align: left;
+    }
+
+    .info-item {
+        background: #f7fafc;
+        padding: 15px 20px;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #718096;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        font-size: 18px;
+        color: #2d3748;
+        font-weight: 700;
+    }
+
+    .no-image {
+        padding: 80px 40px;
+        text-align: center;
+        color: #a0aec0;
+    }
+
+    .no-image i {
+        font-size: 80px;
+        color: #cbd5e0;
+        margin-bottom: 20px;
+    }
+
+    .no-image h3 {
+        color: #4a5568;
+        margin-bottom: 10px;
+    }
+
+    .no-image p {
+        color: #718096;
+        font-size: 16px;
+    }
+
+    /* Lightbox */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        cursor: zoom-out;
+    }
+
+    .lightbox.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .lightbox img {
+        max-width: 95%;
+        max-height: 95%;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+        background: rgba(255,255,255,0.1);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .lightbox-close:hover {
+        background: rgba(255,255,255,0.2);
+        transform: rotate(90deg);
+    }
+
+    @@media (max-width: 768px) {
+        .image-header {
+            flex-direction: column;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .header-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .btn-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="image-container">
+
+    <!-- Header -->
+    <div class="image-header">
+        <div class="header-info">
+            <h2>
+                <i class="fa fa-picture-o"></i>
+                @Model.DesignCode
+            </h2>
+            <p>@Model.DesignName</p>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("Preview", "Design", new { designId = Model.DesignId })"
+               class="btn-action btn-primary">
+                <i class="fa fa-eye"></i> Full Preview
+            </a>
+            <a href="@Url.Action("Index", "Design")"
+               class="btn-action btn-secondary">
+                <i class="fa fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Image Card -->
+    <div class="image-card">
+        @if (Model.HasImage)
+        {
+            <div class="image-wrapper">
+                <img src="data:image/png;base64,@Convert.ToBase64String(Model.ImageData)"
+                     alt="@Model.DesignName"
+                     class="design-image"
+                     onclick="openLightbox(this)" />
+            </div>
+
+            <!-- Image Info -->
+            <div class="image-info">
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fa fa-arrows-h"></i> Width
+                    </div>
+                    <div class="info-value">@(Model.Width?.ToString("0.#") ?? "N/A") mm</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fa fa-arrows-v"></i> Height
+                    </div>
+                    <div class="info-value">@(Model.Height?.ToString("0.#") ?? "N/A") mm</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fa fa-palette"></i> Colors
+                    </div>
+                    <div class="info-value">@(Model.Colors ?? 0)</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">
+                        <i class="fa fa-dot-circle-o"></i> Stitches
+                    </div>
+                    <div class="info-value">@(Model.Stitches?.ToString("N0") ?? "N/A")</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; color: #718096; font-size: 14px;">
+                <i class="fa fa-info-circle"></i> Click on image to zoom
+            </div>
+        }
+        else
+        {
+            <div class="no-image">
+                <i class="fa fa-image"></i>
+                <h3>No Image Available</h3>
+                <p>This design doesn't have an associated image.</p>
+                <a href="@Url.Action("Preview", "Design", new { designId = Model.DesignId })"
+                   class="btn-action btn-primary"
+                   style="margin-top: 20px; display: inline-flex;">
+                    <i class="fa fa-eye"></i> View Design Details
+                </a>
+            </div>
+        }
+    </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <img src="" id="lightbox-img" alt="Zoomed Image">
+</div>
+
+@section Scripts {
+    <script>
+        function openLightbox(img) {
+            var lightbox = document.getElementById('lightbox');
+            var lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = img.src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            var lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close on ESC key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+}

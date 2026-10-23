@@ -1,0 +1,131 @@
+﻿@model List<PdfReader_App.Models.ViewModels.StopSequenceVM>
+
+@{
+    ViewBag.Title = "Stop Sequence";
+}
+
+<div class="container-fluid mt-4">
+
+    <!-- Header -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header stop-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fa fa-list-ol"></i>
+                Stop Sequence
+            </h4>
+            <span class="badge design-badge">
+                @ViewBag.DesignCode
+            </span>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table stop-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Needle</th>
+                                <th>Stitches</th>
+                                <th>Color Code</th>
+                                <th>Color Name</th>
+                                <th>Element</th>
+                                <th>Sequin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var stop in Model)
+                            {
+                                <tr>
+                                    <td><strong>@stop.SequenceNo</strong></td>
+                                    <td>@stop.NeedleNo</td>
+                                    <td>@(stop.StitchCount?.ToString("N0"))</td>
+                                    <td>@stop.ColorCode</td>
+                                    <td>@stop.ColorName</td>
+                                    <td>@stop.ElementName</td>
+                                    <td>@stop.SequinInfo</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center">
+                    <i class="fa fa-info-circle"></i>
+                    No stop sequences found for this design.
+                </div>
+            }
+
+            <!-- Actions -->
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                    <i class="fa fa-arrow-left"></i> Back
+                </a>
+
+                <a href="@Url.Action("Preview", new { designId = ViewBag.DesignId })"
+                   class="btn btn-purple">
+                    <i class="fa fa-eye"></i> Full Preview
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<style>
+    .stop-header {
+        background: linear-gradient(135deg, #6f42c1, #5a2d9c);
+        color: #fff;
+        border-radius: 10px;
+    }
+
+    .stop-table {
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .stop-table thead th {
+            background: #f3ecff;
+            color: #4b2c83;
+            font-weight: 600;
+            border-bottom: 2px solid #d9c9fb;
+            white-space: nowrap;
+        }
+
+        .stop-table td,
+        .stop-table th {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee4ff;
+            vertical-align: middle;
+        }
+
+        .stop-table tbody tr:hover {
+            background: #faf7ff;
+        }
+
+    .design-badge {
+        background: #f3ecff;
+        color: #4b2c83;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 20px;
+    }
+
+    .btn-purple {
+        background: #6f42c1;
+        color: #fff;
+    }
+
+        .btn-purple:hover {
+            background: #5a2d9c;
+            color: #fff;
+        }
+
+</style>

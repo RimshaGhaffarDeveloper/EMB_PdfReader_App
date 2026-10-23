@@ -1,0 +1,146 @@
+﻿@model PdfReader_App.Models.ViewModels.MachineInfoVM
+
+@{
+    ViewBag.Title = "Machine Info";
+}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header machine-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">
+                <i class="fa fa-cog"></i>
+                Machine Information
+            </h4>
+            <span class="badge design-badge">
+                @ViewBag.DesignCode
+            </span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="dashboard-row">
+
+        <!-- LEFT -->
+        <div class="info-card">
+            <h5><i class="fa fa-sliders"></i> Format & Counts</h5>
+            <table class="table info-table">
+                <tr><th>Machine Format</th><td>@Model.MachineFormat</td></tr>
+                <tr><th>Color Changes</th><td>@Model.ColorChanges</td></tr>
+                <tr><th>Stops</th><td>@Model.Stops</td></tr>
+                <tr><th>Trims</th><td>@Model.Trims</td></tr>
+                <tr><th>Appliqués</th><td>@Model.Appliques</td></tr>
+            </table>
+
+            <h5 class="mt-4"><i class="fa fa-arrows"></i> Measurements (mm)</h5>
+            <table class="table info-table">
+                <tr><th>Left</th><td>@(Model.Left?.ToString("F2"))</td></tr>
+                <tr><th>Right</th><td>@(Model.Right?.ToString("F2"))</td></tr>
+                <tr><th>Up</th><td>@(Model.Up?.ToString("F2"))</td></tr>
+                <tr><th>Down</th><td>@(Model.Down?.ToString("F2"))</td></tr>
+            </table>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="info-card">
+            <h5><i class="fa fa-crosshairs"></i> Position & Area</h5>
+            <table class="table info-table">
+                <tr><th>End X (mm)</th><td>@(Model.EndX?.ToString("F2"))</td></tr>
+                <tr><th>End Y (mm)</th><td>@(Model.EndY?.ToString("F2"))</td></tr>
+                <tr><th>Area (mm²)</th><td>@(Model.Area?.ToString("F2"))</td></tr>
+            </table>
+
+            <h5 class="mt-4"><i class="fa fa-scissors"></i> Stitch & Jump (mm)</h5>
+            <table class="table info-table">
+                <tr><th>Max Stitch</th><td>@(Model.MaxStitch?.ToString("F2"))</td></tr>
+                <tr><th>Min Stitch</th><td>@(Model.MinStitch?.ToString("F2"))</td></tr>
+                <tr><th>Max Jump</th><td>@(Model.MaxJump?.ToString("F2"))</td></tr>
+            </table>
+
+            <h5 class="mt-4"><i class="fa fa-tint"></i> Thread Usage (m)</h5>
+            <table class="table info-table">
+                <tr><th>Total Thread</th><td>@(Model.TotalThread?.ToString("F2"))</td></tr>
+                <tr><th>Total Bobbin</th><td>@(Model.TotalBobbin?.ToString("F2"))</td></tr>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-4 d-flex justify-content-between">
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+            <i class="fa fa-arrow-left"></i> Back
+        </a>
+
+        <a href="@Url.Action("Preview", new { designId = ViewBag.DesignId })"
+           class="btn btn-purple">
+            <i class="fa fa-eye"></i> Full Preview
+        </a>
+    </div>
+
+</div>
+<style>
+    .machine-header {
+        background: linear-gradient(135deg, #6f42c1, #5a2d9c);
+        color: #fff;
+        border-radius: 10px;
+    }
+
+    .design-badge {
+        background: #f3ecff;
+        color: #4b2c83;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+
+    .dashboard-row {
+        display: flex;
+        gap: 24px;
+        align-items: stretch;
+    }
+
+    .info-card {
+        flex: 1;
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(111,66,193,0.08);
+    }
+
+        .info-card h5 {
+            font-weight: 600;
+            color: #4b2c83;
+            border-bottom: 2px solid #e6dcfb;
+            padding-bottom: 6px;
+            margin-bottom: 14px;
+        }
+
+    .info-table th {
+        width: 55%;
+        background: #f8f5ff;
+        color: #4b2c83;
+        font-weight: 500;
+    }
+
+    .info-table td {
+        background: #fff;
+    }
+
+    .btn-purple {
+        background: #6f42c1;
+        color: #fff;
+    }
+
+        .btn-purple:hover {
+            background: #5a2d9c;
+            color: #fff;
+        }
+
+    @@media (max-width: 768px) {
+        .dashboard-row {
+            flex-direction: column;
+        }
+    }
+</style>

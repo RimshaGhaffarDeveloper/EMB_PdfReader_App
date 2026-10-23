@@ -1,0 +1,433 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PdfReader_DbModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Designs">
+          <Key>
+            <PropertyRef Name="DesignId" />
+          </Key>
+          <Property Name="DesignId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesignCode" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DesignName" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Stitches" Type="int" />
+          <Property Name="HeightMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="WidthMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Colors" Type="int" />
+          <Property Name="Colorway" Type="varchar" MaxLength="100" />
+          <Property Name="Zoom" Type="decimal" Precision="5" Scale="2" />
+          <Property Name="DesignLastSaved" Type="datetime" />
+          <Property Name="DatePrinted" Type="datetime" />
+          <Property Name="CreatedOn" Type="datetime" />
+          <Property Name="DesignImage" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="MachineInfo">
+          <Key>
+            <PropertyRef Name="MachineId" />
+          </Key>
+          <Property Name="MachineId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesignId" Type="int" Nullable="false" />
+          <Property Name="MachineFormat" Type="varchar" MaxLength="100" />
+          <Property Name="ColorChanges" Type="int" />
+          <Property Name="Stops" Type="int" />
+          <Property Name="Trims" Type="int" />
+          <Property Name="Appliques" Type="int" />
+          <Property Name="LeftMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="RightMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="UpMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="DownMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="EndXMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="EndYMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="AreaMM2" Type="decimal" Precision="15" Scale="2" />
+          <Property Name="MaxStitchMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="MinStitchMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="MaxJumpMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="TotalThreadM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="TotalBobbinM" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Sequins">
+          <Key>
+            <PropertyRef Name="SequinId" />
+          </Key>
+          <Property Name="SequinId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesignId" Type="int" Nullable="false" />
+          <Property Name="SequenceNo" Type="int" />
+          <Property Name="Shape" Type="varchar" MaxLength="50" />
+          <Property Name="SizeMM" Type="decimal" Precision="10" Scale="2" />
+          <Property Name="Count" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="StopSequences">
+          <Key>
+            <PropertyRef Name="StopSequenceId" />
+          </Key>
+          <Property Name="StopSequenceId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesignId" Type="int" Nullable="false" />
+          <Property Name="SequenceNo" Type="int" />
+          <Property Name="NeedleNo" Type="int" />
+          <Property Name="StitchCount" Type="int" />
+          <Property Name="ColorCode" Type="varchar" MaxLength="50" />
+          <Property Name="ColorName" Type="varchar" MaxLength="255" />
+          <Property Name="ElementName" Type="varchar" MaxLength="255" />
+          <Property Name="SequinInfo" Type="varchar" MaxLength="255" />
+        </EntityType>
+        <EntityType Name="ThreadUsage">
+          <Key>
+            <PropertyRef Name="ThreadUsageId" />
+          </Key>
+          <Property Name="ThreadUsageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesignId" Type="int" Nullable="false" />
+          <Property Name="NeedleNo" Type="int" />
+          <Property Name="ColorCode" Type="varchar" MaxLength="50" />
+          <Property Name="ColorName" Type="varchar" MaxLength="255" />
+          <Property Name="ThreadLengthM" Type="decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <Association Name="FK_MachineInfo_Design">
+          <End Role="Designs" Type="Self.Designs" Multiplicity="1" />
+          <End Role="MachineInfo" Type="Self.MachineInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="MachineInfo">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sequins_Design">
+          <End Role="Designs" Type="Self.Designs" Multiplicity="1" />
+          <End Role="Sequins" Type="Self.Sequins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="Sequins">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StopSequence_Design">
+          <End Role="Designs" Type="Self.Designs" Multiplicity="1" />
+          <End Role="StopSequences" Type="Self.StopSequences" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="StopSequences">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ThreadUsage_Design">
+          <End Role="Designs" Type="Self.Designs" Multiplicity="1" />
+          <End Role="ThreadUsage" Type="Self.ThreadUsage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="ThreadUsage">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PdfReader_DbModelStoreContainer">
+          <EntitySet Name="Designs" EntityType="Self.Designs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MachineInfo" EntityType="Self.MachineInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Sequins" EntityType="Self.Sequins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="StopSequences" EntityType="Self.StopSequences" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ThreadUsage" EntityType="Self.ThreadUsage" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_MachineInfo_Design" Association="Self.FK_MachineInfo_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="MachineInfo" EntitySet="MachineInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sequins_Design" Association="Self.FK_Sequins_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="Sequins" EntitySet="Sequins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StopSequence_Design" Association="Self.FK_StopSequence_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="StopSequences" EntitySet="StopSequences" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ThreadUsage_Design" Association="Self.FK_ThreadUsage_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="ThreadUsage" EntitySet="ThreadUsage" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PdfReader_DbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Design">
+          <Key>
+            <PropertyRef Name="DesignId" />
+          </Key>
+          <Property Name="DesignId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DesignName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Stitches" Type="Int32" />
+          <Property Name="HeightMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="WidthMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Colors" Type="Int32" />
+          <Property Name="Colorway" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Zoom" Type="Decimal" Precision="5" Scale="2" />
+          <Property Name="DesignLastSaved" Type="DateTime" Precision="3" />
+          <Property Name="DatePrinted" Type="DateTime" Precision="3" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="MachineInfoes" Relationship="Self.FK_MachineInfo_Design" FromRole="Designs" ToRole="MachineInfo" />
+          <NavigationProperty Name="Sequins" Relationship="Self.FK_Sequins_Design" FromRole="Designs" ToRole="Sequins" />
+          <NavigationProperty Name="StopSequences" Relationship="Self.FK_StopSequence_Design" FromRole="Designs" ToRole="StopSequences" />
+          <NavigationProperty Name="ThreadUsages" Relationship="Self.FK_ThreadUsage_Design" FromRole="Designs" ToRole="ThreadUsage" />
+          <Property Name="DesignImage" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="MachineInfo">
+          <Key>
+            <PropertyRef Name="MachineId" />
+          </Key>
+          <Property Name="MachineId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignId" Type="Int32" Nullable="false" />
+          <Property Name="MachineFormat" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ColorChanges" Type="Int32" />
+          <Property Name="Stops" Type="Int32" />
+          <Property Name="Trims" Type="Int32" />
+          <Property Name="Appliques" Type="Int32" />
+          <Property Name="LeftMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="RightMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="UpMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="DownMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="EndXMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="EndYMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="AreaMM2" Type="Decimal" Precision="15" Scale="2" />
+          <Property Name="MaxStitchMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="MinStitchMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="MaxJumpMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalThreadM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="TotalBobbinM" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Design" Relationship="Self.FK_MachineInfo_Design" FromRole="MachineInfo" ToRole="Designs" />
+        </EntityType>
+        <EntityType Name="Sequin">
+          <Key>
+            <PropertyRef Name="SequinId" />
+          </Key>
+          <Property Name="SequinId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignId" Type="Int32" Nullable="false" />
+          <Property Name="SequenceNo" Type="Int32" />
+          <Property Name="Shape" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SizeMM" Type="Decimal" Precision="10" Scale="2" />
+          <Property Name="Count" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Design" Relationship="Self.FK_Sequins_Design" FromRole="Sequins" ToRole="Designs" />
+        </EntityType>
+        <EntityType Name="StopSequence">
+          <Key>
+            <PropertyRef Name="StopSequenceId" />
+          </Key>
+          <Property Name="StopSequenceId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignId" Type="Int32" Nullable="false" />
+          <Property Name="SequenceNo" Type="Int32" />
+          <Property Name="NeedleNo" Type="Int32" />
+          <Property Name="StitchCount" Type="Int32" />
+          <Property Name="ColorCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ColorName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ElementName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="SequinInfo" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Design" Relationship="Self.FK_StopSequence_Design" FromRole="StopSequences" ToRole="Designs" />
+        </EntityType>
+        <EntityType Name="ThreadUsage">
+          <Key>
+            <PropertyRef Name="ThreadUsageId" />
+          </Key>
+          <Property Name="ThreadUsageId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesignId" Type="Int32" Nullable="false" />
+          <Property Name="NeedleNo" Type="Int32" />
+          <Property Name="ColorCode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ColorName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ThreadLengthM" Type="Decimal" Precision="10" Scale="2" />
+          <NavigationProperty Name="Design" Relationship="Self.FK_ThreadUsage_Design" FromRole="ThreadUsage" ToRole="Designs" />
+        </EntityType>
+        <Association Name="FK_MachineInfo_Design">
+          <End Role="Designs" Type="Self.Design" Multiplicity="1" />
+          <End Role="MachineInfo" Type="Self.MachineInfo" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="MachineInfo">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Sequins_Design">
+          <End Role="Designs" Type="Self.Design" Multiplicity="1" />
+          <End Role="Sequins" Type="Self.Sequin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="Sequins">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_StopSequence_Design">
+          <End Role="Designs" Type="Self.Design" Multiplicity="1" />
+          <End Role="StopSequences" Type="Self.StopSequence" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="StopSequences">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ThreadUsage_Design">
+          <End Role="Designs" Type="Self.Design" Multiplicity="1" />
+          <End Role="ThreadUsage" Type="Self.ThreadUsage" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Designs">
+              <PropertyRef Name="DesignId" />
+            </Principal>
+            <Dependent Role="ThreadUsage">
+              <PropertyRef Name="DesignId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PdfReader_DbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Designs" EntityType="Self.Design" />
+          <EntitySet Name="MachineInfoes" EntityType="Self.MachineInfo" />
+          <EntitySet Name="Sequins" EntityType="Self.Sequin" />
+          <EntitySet Name="StopSequences" EntityType="Self.StopSequence" />
+          <EntitySet Name="ThreadUsages" EntityType="Self.ThreadUsage" />
+          <AssociationSet Name="FK_MachineInfo_Design" Association="Self.FK_MachineInfo_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="MachineInfo" EntitySet="MachineInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Sequins_Design" Association="Self.FK_Sequins_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="Sequins" EntitySet="Sequins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_StopSequence_Design" Association="Self.FK_StopSequence_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="StopSequences" EntitySet="StopSequences" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ThreadUsage_Design" Association="Self.FK_ThreadUsage_Design">
+            <End Role="Designs" EntitySet="Designs" />
+            <End Role="ThreadUsage" EntitySet="ThreadUsages" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PdfReader_DbModelStoreContainer" CdmEntityContainer="PdfReader_DbEntities">
+          <EntitySetMapping Name="Designs">
+            <EntityTypeMapping TypeName="PdfReader_DbModel.Design">
+              <MappingFragment StoreEntitySet="Designs">
+                <ScalarProperty Name="DesignImage" ColumnName="DesignImage" />
+                <ScalarProperty Name="DesignId" ColumnName="DesignId" />
+                <ScalarProperty Name="DesignCode" ColumnName="DesignCode" />
+                <ScalarProperty Name="DesignName" ColumnName="DesignName" />
+                <ScalarProperty Name="Stitches" ColumnName="Stitches" />
+                <ScalarProperty Name="HeightMM" ColumnName="HeightMM" />
+                <ScalarProperty Name="WidthMM" ColumnName="WidthMM" />
+                <ScalarProperty Name="Colors" ColumnName="Colors" />
+                <ScalarProperty Name="Colorway" ColumnName="Colorway" />
+                <ScalarProperty Name="Zoom" ColumnName="Zoom" />
+                <ScalarProperty Name="DesignLastSaved" ColumnName="DesignLastSaved" />
+                <ScalarProperty Name="DatePrinted" ColumnName="DatePrinted" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MachineInfoes">
+            <EntityTypeMapping TypeName="PdfReader_DbModel.MachineInfo">
+              <MappingFragment StoreEntitySet="MachineInfo">
+                <ScalarProperty Name="MachineId" ColumnName="MachineId" />
+                <ScalarProperty Name="DesignId" ColumnName="DesignId" />
+                <ScalarProperty Name="MachineFormat" ColumnName="MachineFormat" />
+                <ScalarProperty Name="ColorChanges" ColumnName="ColorChanges" />
+                <ScalarProperty Name="Stops" ColumnName="Stops" />
+                <ScalarProperty Name="Trims" ColumnName="Trims" />
+                <ScalarProperty Name="Appliques" ColumnName="Appliques" />
+                <ScalarProperty Name="LeftMM" ColumnName="LeftMM" />
+                <ScalarProperty Name="RightMM" ColumnName="RightMM" />
+                <ScalarProperty Name="UpMM" ColumnName="UpMM" />
+                <ScalarProperty Name="DownMM" ColumnName="DownMM" />
+                <ScalarProperty Name="EndXMM" ColumnName="EndXMM" />
+                <ScalarProperty Name="EndYMM" ColumnName="EndYMM" />
+                <ScalarProperty Name="AreaMM2" ColumnName="AreaMM2" />
+                <ScalarProperty Name="MaxStitchMM" ColumnName="MaxStitchMM" />
+                <ScalarProperty Name="MinStitchMM" ColumnName="MinStitchMM" />
+                <ScalarProperty Name="MaxJumpMM" ColumnName="MaxJumpMM" />
+                <ScalarProperty Name="TotalThreadM" ColumnName="TotalThreadM" />
+                <ScalarProperty Name="TotalBobbinM" ColumnName="TotalBobbinM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Sequins">
+            <EntityTypeMapping TypeName="PdfReader_DbModel.Sequin">
+              <MappingFragment StoreEntitySet="Sequins">
+                <ScalarProperty Name="SequinId" ColumnName="SequinId" />
+                <ScalarProperty Name="DesignId" ColumnName="DesignId" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+                <ScalarProperty Name="Shape" ColumnName="Shape" />
+                <ScalarProperty Name="SizeMM" ColumnName="SizeMM" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StopSequences">
+            <EntityTypeMapping TypeName="PdfReader_DbModel.StopSequence">
+              <MappingFragment StoreEntitySet="StopSequences">
+                <ScalarProperty Name="StopSequenceId" ColumnName="StopSequenceId" />
+                <ScalarProperty Name="DesignId" ColumnName="DesignId" />
+                <ScalarProperty Name="SequenceNo" ColumnName="SequenceNo" />
+                <ScalarProperty Name="NeedleNo" ColumnName="NeedleNo" />
+                <ScalarProperty Name="StitchCount" ColumnName="StitchCount" />
+                <ScalarProperty Name="ColorCode" ColumnName="ColorCode" />
+                <ScalarProperty Name="ColorName" ColumnName="ColorName" />
+                <ScalarProperty Name="ElementName" ColumnName="ElementName" />
+                <ScalarProperty Name="SequinInfo" ColumnName="SequinInfo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ThreadUsages">
+            <EntityTypeMapping TypeName="PdfReader_DbModel.ThreadUsage">
+              <MappingFragment StoreEntitySet="ThreadUsage">
+                <ScalarProperty Name="ThreadUsageId" ColumnName="ThreadUsageId" />
+                <ScalarProperty Name="DesignId" ColumnName="DesignId" />
+                <ScalarProperty Name="NeedleNo" ColumnName="NeedleNo" />
+                <ScalarProperty Name="ColorCode" ColumnName="ColorCode" />
+                <ScalarProperty Name="ColorName" ColumnName="ColorName" />
+                <ScalarProperty Name="ThreadLengthM" ColumnName="ThreadLengthM" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

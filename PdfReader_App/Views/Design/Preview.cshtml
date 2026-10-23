@@ -1,0 +1,726 @@
+﻿@model PdfReader_App.Models.ViewModels.ParsedDesignVM
+@{
+    ViewBag.Title = "Design Preview - " + Model.DesignCode;
+}
+
+<style>
+    :root {
+        --primary: #667eea;
+        --primary-dark: #5a67d8;
+        --success: #48bb78;
+        --info: #4299e1;
+        --warning: #ed8936;
+        --danger: #f56565;
+        --dark: #2d3748;
+        --light: #f7fafc;
+    }
+
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+
+    .preview-container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 30px 20px;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 40px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-info h2 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-info p {
+        margin: 5px 0 0 0;
+        opacity: 0.9;
+        font-size: 18px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .btn-modern {
+        padding: 12px 30px;
+        border-radius: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .btn-success-modern {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+    }
+
+    .btn-success-modern:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+
+    .btn-secondary-modern {
+        background: white;
+        color: var(--primary);
+        border: 2px solid white;
+    }
+
+    .btn-secondary-modern:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    /* Two Column Layout */
+    .two-column-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+
+    /* Modern Card */
+    .modern-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+    }
+
+    .modern-card:hover {
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+    }
+
+    .card-header-modern {
+        padding: 20px 25px;
+        font-weight: 700;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+    }
+
+    .bg-primary-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-info-gradient {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    }
+
+    .bg-success-gradient {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    }
+
+    .bg-warning-gradient {
+        background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    }
+
+    .bg-dark-gradient {
+        background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+    }
+
+    .bg-secondary-gradient {
+        background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    }
+
+    .card-body-modern {
+        padding: 25px;
+    }
+
+    /* Design Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .info-item {
+        background: var(--light);
+        padding: 15px 20px;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary);
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #718096;
+        font-weight: 600;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-value {
+        font-size: 18px;
+        color: var(--dark);
+        font-weight: 700;
+    }
+
+    /* Image Card */
+    /* Image Card - UPDATED */
+    .image-card-body {
+        padding: 15px;
+        text-align: center;
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    }
+
+    .design-image {
+        width: 100% !important; /* ✅ FULL WIDTH */
+        height: auto !important; /* ✅ AUTO HEIGHT */
+        max-width: 100% !important; /* ✅ NO LIMIT */
+        max-height: none !important; /* ✅ NO HEIGHT LIMIT */
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        cursor: zoom-in;
+        transition: all 0.3s ease;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto;
+    }
+
+        .design-image:hover {
+            transform: scale(1.01);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+
+    .no-image {
+        padding: 60px 20px;
+        color: #a0aec0;
+    }
+
+        .no-image i {
+            font-size: 60px;
+            margin-bottom: 15px;
+            color: #cbd5e0;
+        }
+
+    /* Table Styling */
+    .modern-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead th {
+        background: var(--light);
+        color: var(--dark);
+        font-weight: 700;
+        padding: 15px;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .modern-table tbody td {
+        padding: 15px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #4a5568;
+    }
+
+    .modern-table tbody tr:hover {
+        background: var(--light);
+    }
+
+    .modern-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .table-modern-wrapper {
+        overflow-x: auto;
+        border-radius: 0 0 15px 15px;
+    }
+
+    /* Count Badge */
+    .count-badge {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* Full Width Card */
+    .full-width-card {
+        margin-bottom: 30px;
+    }
+
+    /* Alert */
+    .alert-modern {
+        padding: 15px 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    /* Lightbox */
+    .lightbox {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        cursor: zoom-out;
+    }
+
+    .lightbox.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .lightbox img {
+        max-width: 95%;
+        max-height: 95%;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: 30px;
+        right: 40px;
+        color: white;
+        font-size: 40px;
+        cursor: pointer;
+        background: rgba(255,255,255,0.1);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .lightbox-close:hover {
+        background: rgba(255,255,255,0.2);
+        transform: rotate(90deg);
+    }
+
+    /* Responsive */
+    @@media (max-width: 992px) {
+        .two-column-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-header {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .page-header h2 {
+            font-size: 24px;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .btn-modern {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="preview-container">
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-modern">
+            <i class="fa fa-exclamation-triangle"></i> <strong>Error:</strong> @TempData["Error"]
+        </div>
+    }
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-info">
+            <h2>
+                <i class="fa fa-file-pdf-o"></i>
+                @Model.DesignCode
+            </h2>
+            <p>@Model.DesignName</p>
+        </div>
+        <div class="header-actions">
+            @if (!Model.IsSaved)
+            {
+                using (Html.BeginForm("SaveParsedDesign", "Design", FormMethod.Post, new { style = "display: inline;" }))
+                {
+                    <button type="submit" class="btn-modern btn-success-modern">
+                        <i class="fa fa-save"></i> Save to Database
+                    </button>
+                }
+            }
+            <a href="@Url.Action("Index", "Design")" class="btn-modern btn-secondary-modern">
+                <i class="fa fa-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Design Info & Image (Side by Side) -->
+    <div class="two-column-grid">
+
+        <!-- Design Information -->
+        <div class="modern-card">
+            <div class="card-header-modern bg-primary-gradient">
+                <i class="fa fa-info-circle"></i>
+                Design Information
+            </div>
+            <div class="card-body-modern">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-code"></i> Design Code
+                        </div>
+                        <div class="info-value">@(Model.DesignCode ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-tag"></i> Design Name
+                        </div>
+                        <div class="info-value">@(Model.DesignName ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-dot-circle-o"></i> Stitches
+                        </div>
+                        <div class="info-value">@(Model.Stitches?.ToString("N0") ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-palette"></i> Colors
+                        </div>
+                        <div class="info-value">@(Model.Colors?.ToString() ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-arrows-v"></i> Height
+                        </div>
+                        <div class="info-value">@(Model.Height?.ToString("0.#") ?? "N/A") mm</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-arrows-h"></i> Width
+                        </div>
+                        <div class="info-value">@(Model.Width?.ToString("0.#") ?? "N/A") mm</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-paint-brush"></i> Colorway
+                        </div>
+                        <div class="info-value">@(Model.Colorway ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-search"></i> Zoom
+                        </div>
+                        <div class="info-value">@(Model.Zoom?.ToString("0.##") ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-clock-o"></i> Last Saved
+                        </div>
+                        <div class="info-value" style="font-size: 14px;">@(Model.DesignLastSaved?.ToString("MM/dd/yyyy hh:mm tt") ?? "N/A")</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">
+                            <i class="fa fa-print"></i> Date Printed
+                        </div>
+                        <div class="info-value" style="font-size: 14px;">@(Model.DatePrinted?.ToString("MM/dd/yyyy hh:mm tt") ?? "N/A")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Image -->
+        <div class="modern-card">
+            <div class="card-header-modern bg-warning-gradient">
+                <i class="fa fa-picture-o"></i>
+                Design Image
+            </div>
+            <div class="image-card-body">
+                @if (Model.ImageData != null && Model.ImageData.Length > 0)
+                {
+                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.ImageData)"
+                         alt="@Model.DesignName"
+                         class="design-image"
+                         onclick="openLightbox(this)" />
+                    <p style="margin-top: 15px; color: #718096; font-size: 14px;">
+                        <i class="fa fa-info-circle"></i> Click image to zoom
+                    </p>
+                }
+                else
+                {
+                    <div class="no-image">
+                        <i class="fa fa-image"></i>
+                        <p>No Image Available</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Machine Information -->
+    @if (Model.MachineInfo != null)
+    {
+        <div class="modern-card full-width-card">
+            <div class="card-header-modern bg-info-gradient">
+                <i class="fa fa-cog"></i>
+                Machine Information
+            </div>
+            <div class="table-modern-wrapper">
+                <table class="modern-table">
+                    <tbody>
+                        <tr>
+                            <th>Machine Format</th>
+                            <td>@(Model.MachineInfo.MachineFormat ?? "N/A")</td>
+                            <th>Color Changes</th>
+                            <td>@(Model.MachineInfo.ColorChanges?.ToString() ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Stops</th>
+                            <td>@(Model.MachineInfo.Stops?.ToString() ?? "N/A")</td>
+                            <th>Trims</th>
+                            <td>@(Model.MachineInfo.Trims?.ToString() ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Appliqués</th>
+                            <td>@(Model.MachineInfo.Appliques?.ToString() ?? "N/A")</td>
+                            <th>Left (mm)</th>
+                            <td>@(Model.MachineInfo.Left?.ToString("0.#") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Right (mm)</th>
+                            <td>@(Model.MachineInfo.Right?.ToString("0.#") ?? "N/A")</td>
+                            <th>Up (mm)</th>
+                            <td>@(Model.MachineInfo.Up?.ToString("0.#") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Down (mm)</th>
+                            <td>@(Model.MachineInfo.Down?.ToString("0.#") ?? "N/A")</td>
+                            <th>End X (mm)</th>
+                            <td>@(Model.MachineInfo.EndX?.ToString("0.#") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>End Y (mm)</th>
+                            <td>@(Model.MachineInfo.EndY?.ToString("0.#") ?? "N/A")</td>
+                            <th>Area (mm²)</th>
+                            <td>@(Model.MachineInfo.Area?.ToString("0.#") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Max Stitch (mm)</th>
+                            <td>@(Model.MachineInfo.MaxStitch?.ToString("0.#") ?? "N/A")</td>
+                            <th>Min Stitch (mm)</th>
+                            <td>@(Model.MachineInfo.MinStitch?.ToString("0.#") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Max Jump (mm)</th>
+                            <td>@(Model.MachineInfo.MaxJump?.ToString("0.#") ?? "N/A")</td>
+                            <th>Total Thread (m)</th>
+                            <td>@(Model.MachineInfo.TotalThread?.ToString("0.##") ?? "N/A")</td>
+                        </tr>
+                        <tr>
+                            <th>Total Bobbin (m)</th>
+                            <td colspan="3">@(Model.MachineInfo.TotalBobbin?.ToString("0.##") ?? "N/A")</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Stop Sequence -->
+    @if (Model.StopSequences != null && Model.StopSequences.Any())
+    {
+        <div class="modern-card full-width-card">
+            <div class="card-header-modern bg-dark-gradient">
+                <i class="fa fa-list-ol"></i>
+                Stop Sequence
+                <span class="count-badge">@Model.StopSequences.Count items</span>
+            </div>
+            <div class="table-modern-wrapper">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Needle</th>
+                            <th>Stitches</th>
+                            <th>Color Code</th>
+                            <th>Color Name</th>
+                            <th>Element</th>
+                            <th>Sequin Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.StopSequences)
+                        {
+                            <tr>
+                                <td><strong>@s.SequenceNo</strong></td>
+                                <td>@(s.NeedleNo?.ToString() ?? "-")</td>
+                                <td>@(s.StitchCount?.ToString("N0") ?? "-")</td>
+                                <td>@(s.ColorCode ?? "-")</td>
+                                <td>@(s.ColorName ?? "-")</td>
+                                <td>@(s.ElementName ?? "-")</td>
+                                <td>@(s.SequinInfo ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Sequins -->
+    @if (Model.Sequins != null && Model.Sequins.Any())
+    {
+        <div class="modern-card full-width-card">
+            <div class="card-header-modern bg-success-gradient">
+                <i class="fa fa-diamond"></i>
+                Sequins
+                <span class="count-badge">@Model.Sequins.Count items</span>
+            </div>
+            <div class="table-modern-wrapper">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Shape</th>
+                            <th>Size (mm)</th>
+                            <th>Count</th>
+                            <th>Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{int seqNo = 1;}
+                        @foreach (var s in Model.Sequins)
+                        {
+                            <tr>
+                                <td><strong>@seqNo</strong></td>
+                                <td>@(s.Shape ?? "-")</td>
+                                <td>@(s.Size?.ToString("0") ?? "-")</td>
+                                <td>@(s.Count?.ToString("N0") ?? "-")</td>
+                                <td>@(s.Name ?? "-")</td>
+                            </tr>
+                            seqNo++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <!-- Thread Usage -->
+    @if (Model.ThreadUsages != null && Model.ThreadUsages.Any())
+    {
+        <div class="modern-card full-width-card">
+            <div class="card-header-modern bg-secondary-gradient">
+                <i class="fa fa-slack"></i>
+                Thread Usage
+                <span class="count-badge">@Model.ThreadUsages.Count items</span>
+            </div>
+            <div class="table-modern-wrapper">
+                <table class="modern-table">
+                    <thead>
+                        <tr>
+                            <th>Needle #</th>
+                            <th>Color Code</th>
+                            <th>Color Name</th>
+                            <th>Length (m)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.ThreadUsages)
+                        {
+                            <tr>
+                                <td>@(t.NeedleNo?.ToString() ?? "-")</td>
+                                <td>@(t.Code ?? "-")</td>
+                                <td>@(t.Name ?? "-")</td>
+                                <td>@(t.Length?.ToString("0.##") ?? "-")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <img src="" id="lightbox-img" alt="Zoomed Image">
+</div>
+
+@section Scripts {
+    <script>
+        function openLightbox(img) {
+            var lightbox = document.getElementById('lightbox');
+            var lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = img.src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            var lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeLightbox();
+            }
+        });
+    </script>
+}
